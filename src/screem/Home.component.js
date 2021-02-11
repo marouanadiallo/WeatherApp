@@ -3,12 +3,17 @@ import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 
 import { SafeAreaView, StyleSheet, Image } from 'react-native';
-import { Divider, Layout, TopNavigation, TopNavigationAction, Spinner, Text, Card } from '@ui-kitten/components';
+import { Divider, Layout, TopNavigation, TopNavigationAction, Spinner, Text, Card, List } from '@ui-kitten/components';
 import { ThemeContext, toogleThemeIconFill, toogleThemeIconOutiline } from '../modules/theme-context';
-import { WiDaySunny } from "weather-icons-react";
 import { searchIcon } from '../modules/load-Icons.js';
+import PrintItemHourly from '../modules/itemsHourly.js';
+import PrintItemDaily from '../modules/itemsDaily.js';
 
 import { getWeather, getIconApi } from '../api/OpenWeather.js';
+import moment from 'moment';
+import 'moment/locale/fr';
+
+moment.locale('fr');
 
 const HomeScreem = ({ navigation }) => {
 
@@ -73,6 +78,11 @@ const HomeScreem = ({ navigation }) => {
     const results = await getWeather(latitude, longitude);
     setWeatToLocation(results);
     setIsLoading(true);
+    console.log(weatherToLocation.daily);
+  }
+
+  const day = (dt) => {
+    return moment(dt * 1000).format('dddd');
   }
 
   return (
@@ -82,9 +92,9 @@ const HomeScreem = ({ navigation }) => {
       <TopNavigation title={geocode[0].city} alignment='center' accessoryLeft={goSearchScreen} accessoryRight={toogleTheme}/>
       <Divider/>
       <Layout style={{ flex: 1 }}>     
-        <Card style={styles.cardDayTemp} status='basic'>
+        <Layout style={styles.cardDayTemp} status='basic'>
           <Layout style={styles.cardDayTemp}>
-            <Text category="h4">Mardi</Text>
+            <Text category="h4">{day(weatherToLocation.current.dt)}</Text>
             <Layout>
               <Image source={{uri:getIconApi(weatherToLocation.current.weather[0].icon)}} style={{ width: 60, height: 60 }}/>
               <Text category="h5" style={{alignSelf:"center"}}>
@@ -92,13 +102,29 @@ const HomeScreem = ({ navigation }) => {
               </Text>
             </Layout>
           </Layout>
-        </Card>
-        <Card style={styles.cardForecastByHoursDay}>
-          <Text>Prévision par heure de la journée</Text>
-        </Card>
-        <Card style={styles.cardForecastByDay}>
-          <Text>Prévision par semaine</Text>
-        </Card>
+        </Layout>
+        <Divider/>
+        <Layout style={styles.cardForecastByHoursDay}>
+          <List
+            data={weatherToLocation.hourly}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            renderItem ={({item})=>(
+              <PrintItemHourly item={item}/>
+              )}
+          />
+        </Layout>
+        <Divider/>
+        <Layout style={styles.cardForecastByDay}>
+          <List
+              style={{flex:1}}
+              showsVerticalScrollIndicator={false}
+              data={weatherToLocation.daily}
+              renderItem ={({item})=>(
+                <PrintItemDaily item={item}/>
+                )}
+            />   
+        </Layout>
       </Layout>
     </SafeAreaView>) : 
     <SafeAreaView style={[styles.container ,{justifyContent:"center", alignItems:"center"}]}>
@@ -124,6 +150,10 @@ const styles = StyleSheet.create({
   cardForecastByHoursDay: {
   },
   cardForecastByDay: {
-    flex: 2
+    flex: 2,
+    marginTop:5,
+    //borderColor:"red",
+    //borderWidth:1,
+    paddingHorizontal:10
   }
 });
