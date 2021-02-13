@@ -1,19 +1,16 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 
-import { SafeAreaView, StyleSheet, Image } from 'react-native';
-import { Divider, Layout, TopNavigation, TopNavigationAction, Spinner, Text, Card, List } from '@ui-kitten/components';
+import { SafeAreaView, StyleSheet } from 'react-native';
+import { TopNavigationAction, TopNavigation, Spinner, Layout, Button, Divider } from '@ui-kitten/components';
 import { ThemeContext, toogleThemeIconFill, toogleThemeIconOutiline } from '../modules/theme-context';
-import { searchIcon } from '../modules/load-Icons.js';
-import PrintItemHourly from '../modules/itemsHourly.js';
-import PrintItemDaily from '../modules/itemsDaily.js';
+import { searchIcon, MoreIcon } from '../modules/load-Icons.js';
 
-import { getWeather, getIconApi } from '../api/OpenWeather.js';
-import moment from 'moment';
-import 'moment/locale/fr';
 
-moment.locale('fr');
+import WeatherDetails from '../modules/weatherDetails.js'
+
+import { getWeather } from '../api/OpenWeather.js';
 
 const HomeScreem = ({ navigation }) => {
 
@@ -25,8 +22,9 @@ const HomeScreem = ({ navigation }) => {
 
 
   const [isLoading, setIsLoading] = useState(false); 
-
-  useEffect(() => {
+  const [refreshing, setRefreshing] = useState(false);
+  
+   useEffect(() => {
         (async () => {
           let { status } = await Permissions.askAsync(Permissions.LOCATION).catch((error)=>{
             console.log("error to acces for permission !");
@@ -53,9 +51,25 @@ const HomeScreem = ({ navigation }) => {
           try {
             getWeatherToLocation(latitude, longitude);
           } catch (error) {
-            console.log("error loading api !");
+            console.log("error loading api !"+ error);
           }
         })();
+  }, []);
+
+  const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  }
+  
+  const onRefresh = useCallback(() => {
+    //console.log(location);
+    try {
+      getWeatherToLocation(location.location.latitude, location.location.longitude);
+      setRefreshing(true);
+      wait(2000).then(() => setRefreshing(false));
+    } catch (error) {
+      console.log("error loading api ! "+error);
+    }
+    
   }, []);
 
   const toogleTheme = () => (
@@ -78,11 +92,7 @@ const HomeScreem = ({ navigation }) => {
     const results = await getWeather(latitude, longitude);
     setWeatToLocation(results);
     setIsLoading(true);
-    console.log(weatherToLocation.daily);
-  }
-
-  const day = (dt) => {
-    return moment(dt * 1000).format('dddd');
+    //console.log(weatherToLocation.daily);
   }
 
   return (
@@ -90,70 +100,24 @@ const HomeScreem = ({ navigation }) => {
     isLoading ? 
     (<SafeAreaView  style={styles.container}>
       <TopNavigation title={geocode[0].city} alignment='center' accessoryLeft={goSearchScreen} accessoryRight={toogleTheme}/>
-      <Divider/>
-      <Layout style={{ flex: 1 }}>     
-        <Layout style={styles.cardDayTemp} status='basic'>
-          <Layout style={styles.cardDayTemp}>
-            <Text category="h4">{day(weatherToLocation.current.dt)}</Text>
-            <Layout>
-              <Image source={{uri:getIconApi(weatherToLocation.current.weather[0].icon)}} style={{ width: 60, height: 60 }}/>
-              <Text category="h5" style={{alignSelf:"center"}}>
-                {Math.round (weatherToLocation.current.temp) }°
-              </Text>
-            </Layout>
-          </Layout>
+      <Layout style={{flex:1}}>
+        <WeatherDetails weatherToLocation={weatherToLocation} func={onRefresh} refreshing={refreshing}/>
+        <Divider/>
+        <Layout style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+          <Button style={styles.button} appearance='ghost' status='info' accessoryRight={MoreIcon}>Details</Button>
         </Layout>
         <Divider/>
-        <Layout style={styles.cardForecastByHoursDay}>
-          <List
-            data={weatherToLocation.hourly}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            renderItem ={({item})=>(
-              <PrintItemHourly item={item}/>
-              )}
-          />
-        </Layout>
-        <Divider/>
-        <Layout style={styles.cardForecastByDay}>
-          <List
-              style={{flex:1}}
-              showsVerticalScrollIndicator={false}
-              data={weatherToLocation.daily}
-              renderItem ={({item})=>(
-                <PrintItemDaily item={item}/>
-                )}
-            />   
-        </Layout>
       </Layout>
     </SafeAreaView>) : 
     <SafeAreaView style={[styles.container ,{justifyContent:"center", alignItems:"center"}]}>
-      <Spinner/>
+      <Spinner size='giant'/>
     </SafeAreaView>
   );
 }
 
 export default HomeScreem;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  card: {
-    margin: 2,
-  },
-  cardDayTemp : {
-    flex:1,
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  cardForecastByHoursDay: {
-  },
-  cardForecastByDay: {
-    flex: 2,
-    marginTop:5,
-    //borderColor:"red",
-    //borderWidth:1,
-    paddingHorizontal:10
   }
 });

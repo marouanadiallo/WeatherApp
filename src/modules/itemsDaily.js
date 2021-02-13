@@ -35,16 +35,15 @@ export default PrintItemDaily;
 
 const styles = StyleSheet.create({
     container:{
-        flex:1,
         flexDirection:"row",
         justifyContent:"space-between",
         alignItems:"center",
-        paddingVertical:5
+        paddingVertical:15
     },
     day_date:{
         flex:1,
         flexDirection:"row",
-        justifyContent:"flex-start",
+        justifyContent:"space-evenly",
         alignItems: "center"
     },
     sectionIcon:{
