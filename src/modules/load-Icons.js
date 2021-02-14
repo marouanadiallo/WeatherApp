@@ -9,7 +9,7 @@ export const LocationIcon = (props) => (
     <Icon {...props} name='globe-3'/>
 );
 
-export const searchIcon = (props) => (
+export const SearchIcon = (props) => (
     <Icon {...props} name='search'/>
 );
 export const BackIcon = (props) => (
@@ -18,4 +18,10 @@ export const BackIcon = (props) => (
 
 export const MoreIcon = (props) => (
     <Icon {...props} name='arrowhead-right-outline' />
+);
+export const CloseIcon = (props) => (
+    <Icon {...props} name='close-outline' />
+);
+export const NotIcon = (props) => (
+    <Icon {...props} name='slash-outline' />
 );

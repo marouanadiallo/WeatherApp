@@ -13,10 +13,10 @@ import { ScrollView } from 'react-native-gesture-handler';
 moment.locale('fr');
 
 
-const WeatherDetails = ({weatherToLocation, func, refreshing}) =>{
-    if (refreshing) {
-        console.log("refresing");
-    }
+const WeatherDetails = ({weatherToLocation, callback_func_Refreshing, refreshing}) =>{
+    //if (refreshing) {
+      //  console.log("refresing");
+   // }
     const day = (dt) => {
         return moment(dt * 1000).format('dddd');
     }
@@ -29,7 +29,7 @@ const WeatherDetails = ({weatherToLocation, func, refreshing}) =>{
                     refreshControl={
                         <RefreshControl
                           refreshing={refreshing}
-                          onRefresh={()=>func()}
+                          onRefresh={()=>callback_func_Refreshing()}
                         />
                     }
                 >

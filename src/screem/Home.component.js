@@ -3,9 +3,9 @@ import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 
 import { SafeAreaView, StyleSheet } from 'react-native';
-import { TopNavigationAction, TopNavigation, Spinner, Layout, Button, Divider } from '@ui-kitten/components';
+import { TopNavigationAction, TopNavigation, Spinner, Layout, Button, Divider, Text, Card, Modal } from '@ui-kitten/components';
 import { ThemeContext, toogleThemeIconFill, toogleThemeIconOutiline } from '../modules/theme-context';
-import { searchIcon, MoreIcon } from '../modules/load-Icons.js';
+import { SearchIcon, MoreIcon } from '../modules/load-Icons.js';
 
 
 import WeatherDetails from '../modules/weatherDetails.js'
@@ -19,6 +19,7 @@ const HomeScreem = ({ navigation }) => {
   const [geocode, setGeocode] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [weatherToLocation, setWeatToLocation] = useState([]); 
+  const [visible, setVisible] = React.useState(false);
 
 
   const [isLoading, setIsLoading] = useState(false); 
@@ -46,6 +47,7 @@ const HomeScreem = ({ navigation }) => {
           } catch (error) {
             console.log("no init geocode !");
           }
+          
           setLocation({location: {latitude, longitude}});
 
           try {
@@ -82,7 +84,7 @@ const HomeScreem = ({ navigation }) => {
     navigation.navigate('Search');
   }
   const goSearchScreen = () => (
-    <TopNavigationAction icon={searchIcon} onPress={navigateSearchWeatherByLocation} />
+    <TopNavigationAction icon={SearchIcon} onPress={navigateSearchWeatherByLocation} />
   );
   const navigateDetails = () => {
      navigation.navigate('Details');
@@ -94,21 +96,43 @@ const HomeScreem = ({ navigation }) => {
     setIsLoading(true);
     //console.log(weatherToLocation.daily);
   }
-
+  const printModal = () => {
+    setVisible(true);
+  }
   return (
     
     isLoading ? 
-    (<SafeAreaView  style={styles.container}>
-      <TopNavigation title={geocode[0].city} alignment='center' accessoryLeft={goSearchScreen} accessoryRight={toogleTheme}/>
-      <Layout style={{flex:1}}>
-        <WeatherDetails weatherToLocation={weatherToLocation} func={onRefresh} refreshing={refreshing}/>
-        <Divider/>
-        <Layout style={{flex:1, justifyContent:"center", alignItems:"center"}}>
-          <Button style={styles.button} appearance='ghost' status='info' accessoryRight={MoreIcon}>Details</Button>
-        </Layout>
-        <Divider/>
-      </Layout>
-    </SafeAreaView>) : 
+    (
+      <SafeAreaView  style={styles.container}>
+        {
+          weatherToLocation.cod === 429 ?
+          (
+            <Modal visible={visible}>
+              <Card disabled={true}>
+                <Text>{weatherToLocation.message}</Text>
+                <Button onPress={() => setVisible(false)}>
+                  Fermer
+                </Button>
+              </Card>
+            </Modal>
+          ):
+          (
+            <Layout style={{flex:1}}>
+               <TopNavigation title={geocode[0].city} alignment='center' accessoryLeft={goSearchScreen} accessoryRight={toogleTheme}/>
+              <Layout style={{flex:1}}>
+                <WeatherDetails weatherToLocation={weatherToLocation} callback_func_Refreshing={onRefresh} refreshing={refreshing}/>
+                <Divider/>
+                <Layout style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+                  <Button style={styles.button} appearance='ghost' status='info' accessoryRight={MoreIcon}>Details</Button>
+                </Layout>
+                <Divider/>
+              </Layout>
+            </Layout>
+           
+          )
+        } 
+      </SafeAreaView>
+    ) : 
     <SafeAreaView style={[styles.container ,{justifyContent:"center", alignItems:"center"}]}>
       <Spinner size='giant'/>
     </SafeAreaView>
