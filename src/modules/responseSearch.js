@@ -6,7 +6,7 @@ import PrintItemHourly from '../modules/itemsHourly.js';
 import {getWeather, getIconApi} from '../api/OpenWeather.js';
 import { NotIcon} from '../modules/load-Icons.js';
 
-const PrintResponseSearch = ({result}) => {
+const PrintResponseSearch = ({result, navigation }) => {
     const [weatherToLocation, setWeatToLocation] = useState([]);
 
    useEffect(()=>{
@@ -26,11 +26,14 @@ const PrintResponseSearch = ({result}) => {
             console.log("echec !");
         }
    }
-   
+   const goToDetails = (lat, lng) =>{
+     navigation.navigate('Details', {geocode:{latitude:lat, longitude:lng}})
+   }
+
     return (
         weatherToLocation.length !== 0 ?
         (
-        <TouchableOpacity style={styles.container}>
+        <TouchableOpacity style={styles.container} onPress={()=>{goToDetails(result.geometry.lat, result.geometry.lng)}}>
             <Layout style={styles.header}>
                 <Layout>
                     {
@@ -69,7 +72,7 @@ const PrintResponseSearch = ({result}) => {
                         )}
                 />
             </Layout>
-        </TouchableOpacity >): (<Divider/>)
+        </TouchableOpacity >): null
     );
 }
 

@@ -5,8 +5,9 @@ import { ThemeContext, toogleThemeIconFill, toogleThemeIconOutiline } from '../m
 import { BackIcon } from '../modules/load-Icons.js';
 
 
-const DetailsScreen = ({ navigation }) => {
+const DetailsScreen = ({ navigation, route }) => {
   const themeContext = React.useContext(ThemeContext);
+  const {latitude, longitude} = route.params.geocode;
 
   const toogleTheme = () => (
     themeContext.toggleTheme === 'light' ? 
@@ -28,6 +29,7 @@ const DetailsScreen = ({ navigation }) => {
       <Divider/>
       <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text category="h1">DETAILS</Text>
+        <Text>{latitude}, {longitude}</Text>
       </Layout>
     </SafeAreaView>
     

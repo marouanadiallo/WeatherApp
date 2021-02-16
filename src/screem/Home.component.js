@@ -48,7 +48,7 @@ const HomeScreem = ({ navigation }) => {
             console.log("no init geocode !");
           }
           
-          setLocation({location: {latitude, longitude}});
+          setLocation({latitude:latitude, longitude:longitude});
 
           try {
             getWeatherToLocation(latitude, longitude);
@@ -65,7 +65,7 @@ const HomeScreem = ({ navigation }) => {
   const onRefresh = useCallback(() => {
     //console.log(location);
     try {
-      getWeatherToLocation(location.location.latitude, location.location.longitude);
+      getWeatherToLocation(location.latitude, location.longitude);
       setRefreshing(true);
       wait(2000).then(() => setRefreshing(false));
     } catch (error) {
@@ -83,11 +83,12 @@ const HomeScreem = ({ navigation }) => {
   const navigateSearchWeatherByLocation = () => {
     navigation.navigate('Search');
   }
+
   const goSearchScreen = () => (
     <TopNavigationAction icon={SearchIcon} onPress={navigateSearchWeatherByLocation} />
   );
   const navigateDetails = () => {
-     navigation.navigate('Details');
+     navigation.navigate('Details', {geocode:location});
   };
 
   const getWeatherToLocation = async (latitude, longitude) => {
@@ -123,7 +124,7 @@ const HomeScreem = ({ navigation }) => {
                 <WeatherDetails weatherToLocation={weatherToLocation} callback_func_Refreshing={onRefresh} refreshing={refreshing}/>
                 <Divider/>
                 <Layout style={{flex:1, justifyContent:"center", alignItems:"center"}}>
-                  <Button style={styles.button} appearance='ghost' status='info' accessoryRight={MoreIcon}>Details</Button>
+                  <Button style={styles.button} appearance='ghost' status='info' accessoryRight={MoreIcon} onPress={navigateDetails}>Details</Button>
                 </Layout>
                 <Divider/>
               </Layout>

@@ -25,3 +25,9 @@ export const CloseIcon = (props) => (
 export const NotIcon = (props) => (
     <Icon {...props} name='slash-outline' />
 );
+export const ArrowDownwardIcon = (props) => (
+    <Icon {...props} name='arrow-ios-downward-outline' />
+);
+export const ArrowUpwardIcon = (props) => (
+    <Icon {...props} name='arrow-ios-upward-outline'/>
+);
