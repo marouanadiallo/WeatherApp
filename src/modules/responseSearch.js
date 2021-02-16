@@ -1,14 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import { Image, StyleSheet, TouchableOpacity  } from 'react-native';
-import { Layout, Text, List, Divider } from '@ui-kitten/components';
+import { Layout, Text, List } from '@ui-kitten/components';
 
 import PrintItemHourly from '../modules/itemsHourly.js';
 import {getWeather, getIconApi} from '../api/OpenWeather.js';
-import { NotIcon} from '../modules/load-Icons.js';
 
 const PrintResponseSearch = ({result, navigation }) => {
     const [weatherToLocation, setWeatToLocation] = useState([]);
-
+    
    useEffect(()=>{
            if(result.components._type === "city" || result.components._type === "county" || result.components._type ==='postcode')
            {
