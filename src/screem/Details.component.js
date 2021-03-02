@@ -1,13 +1,27 @@
-import React from 'react';
+import React, {useContext, useState, useEffect, useCallback} from 'react';
 import { SafeAreaView } from 'react-native';
-import { Divider, Icon, Layout, Text, TopNavigation, TopNavigationAction, Button } from '@ui-kitten/components';
+import { Divider, Layout, Spinner, TopNavigation, TopNavigationAction, Button } from '@ui-kitten/components';
 import { ThemeContext, toogleThemeIconFill, toogleThemeIconOutiline } from '../modules/theme-context';
+
+import { connect } from 'react-redux';
+
 import { BackIcon } from '../modules/load-Icons.js';
+import { getWeather } from '../api/OpenWeather.js';
+import WeatherDetails from '../modules/weatherDetails.js'
 
+const DetailsScreen = ({ navigation, route, dispatch, favorites }) => {
 
-const DetailsScreen = ({ navigation, route }) => {
-  const themeContext = React.useContext(ThemeContext);
-  const {latitude, longitude} = route.params.geocode;
+  const themeContext = useContext(ThemeContext);
+  const { latitude, longitude, formatted, components } = route.params.geocode;
+  const [results, setResults] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(false); 
+  const [refreshing, setRefreshing] = useState(false);
+
+  useEffect(()=>{
+    getWeatherToLocation(latitude, longitude);
+    //console.log(place);
+  }, []);
 
   const toogleTheme = () => (
     themeContext.toggleTheme === 'light' ? 
@@ -22,18 +36,61 @@ const DetailsScreen = ({ navigation, route }) => {
   const BackAction = () => (
     <TopNavigationAction icon={BackIcon} onPress={navigateBack}/>
   );
+  const getWeatherToLocation = async (latitude, longitude) => {
+    const results = await getWeather(latitude, longitude);
+    setResults(results);
+    setIsLoading(true);
+    //console.log(weatherToLocation.daily);
+  }
 
+  const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  }
+  
+  const onRefresh = useCallback(() => {
+    //console.log(location);
+    try {
+      getWeatherToLocation(latitude, longitude);
+      setRefreshing(true);
+      wait(2000).then(() => setRefreshing(false));
+    } catch (error) {
+      console.log("error loading api ! "+error);
+    }
+    
+  }, []);
+
+  const toggleFavorite= () => {
+    const action = { type: "TOGGLE_FAVORITE", value: { geocode:{ latitude:latitude, longitude:longitude, formatted:formatted, components:components} } }
+    dispatch(action);
+  }
+  //console.log(results);
   return (
     <SafeAreaView style={{flex: 1}}>
-      <TopNavigation title='Météo' alignment='center' accessoryLeft={BackAction} accessoryRight={toogleTheme}/>
+      <TopNavigation title={formatted.substring(0, formatted.indexOf(","))} alignment='center' accessoryLeft={BackAction} accessoryRight={toogleTheme}/>
       <Divider/>
-      <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text category="h1">DETAILS</Text>
-        <Text>{latitude}, {longitude}</Text>
-      </Layout>
+      {
+        isLoading ? 
+        (
+          <Layout style={{ flex: 1 }}>
+            <WeatherDetails weatherToLocation={results} callback_func_Refreshing={onRefresh} refreshing={refreshing} isFavorite={
+              favorites.findIndex( elem => elem.geocode.latitude === latitude && elem.geocode.longitude === longitude ) === -1 ? false:true
+            } func_toggle_fav={toggleFavorite}/>
+          </Layout>
+        ):
+        (
+          <Layout style={{flex: 1, justifyContent:"center", alignItems:"center"}}>
+            <Spinner size='giant'/>
+          </Layout>
+        )
+      }
     </SafeAreaView>
     
   );
 };
+const mapStateToProps = state => {
+  return {
+      favorites: state.favorites.favorites
+  }
+}
 
-export default DetailsScreen;
+export default connect (mapStateToProps)(DetailsScreen);

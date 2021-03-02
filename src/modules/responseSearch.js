@@ -1,18 +1,17 @@
 import React, {useState, useEffect} from 'react';
-import { Image, StyleSheet, TouchableOpacity  } from 'react-native';
-import { Layout, Text, List } from '@ui-kitten/components';
+import { Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { Layout, Text, List, Button, Icon } from '@ui-kitten/components';
 
 import PrintItemHourly from '../modules/itemsHourly.js';
 import {getWeather, getIconApi} from '../api/OpenWeather.js';
 
-const PrintResponseSearch = ({result, navigation }) => {
+import {FavIconOutline, FavIcon} from '../modules/load-Icons.js';
+
+const PrintResponseSearch = ({result, navigation, isFavorite }) => {
     const [weatherToLocation, setWeatToLocation] = useState([]);
     
    useEffect(()=>{
-           if(result.components._type === "city" || result.components._type === "county" || result.components._type ==='postcode')
-           {
-               loadLocationWeather();
-           }           
+        loadLocationWeather();         
    }, [result]) 
 
    const loadLocationWeather = async () =>{
@@ -25,21 +24,30 @@ const PrintResponseSearch = ({result, navigation }) => {
             console.log("echec !");
         }
    }
-   const goToDetails = (lat, lng) =>{
-     navigation.navigate('Details', {geocode:{latitude:lat, longitude:lng}})
+   const goToDetails = (lat, lng, place, country, county) =>{
+     navigation.navigate('Details', {geocode:{latitude:lat, longitude:lng, formatted:place, components:{country, county}}})
    }
-
+    const resultKeys = Object.keys(result);
+    const hasFormattedKey = resultKeys.includes("formatted");
+    //console.log(hasFormattedKey);
     return (
         weatherToLocation.length !== 0 ?
         (
-        <TouchableOpacity style={styles.container} onPress={()=>{goToDetails(result.geometry.lat, result.geometry.lng)}}>
+        <TouchableOpacity style={styles.container} onPress={()=>{goToDetails(result.geometry.lat, result.geometry.lng, result.formatted, result.components.country, result.components.county)}}>
             <Layout style={styles.header}>
                 <Layout>
                     {
-                        result.formatted !== "undefined" && result.formatted.includes(',') ?
+                        hasFormattedKey && result.formatted.includes(',') ?
                         (
                             <Layout style={{justifyContent:"flex-start"}}>
-                                <Text category="h6">{result.formatted.substring(0, result.formatted.indexOf(","))}</Text>
+                                <Layout style={{flexDirection:"row", justifyContent:"flex-start"}}>
+                                    <Text category="h6" style={{marginRight:5}}>{result.formatted.substring(0, result.formatted.indexOf(","))}</Text>
+                                    {
+                                        isFavorite ? (
+                                            <Button style={{padding:0}} size='tiny' appearance='ghost'  status="info" accessoryRight={FavIcon}/>
+                                        ) : (<Button style={{padding:0}} size='tiny' appearance='ghost' status="info" accessoryRight={FavIconOutline}/>)
+                                    }
+                                </Layout>
                                 <Text>{result.components.country}, {result.components.county} </Text>
                             </Layout>
                         ):
@@ -68,7 +76,7 @@ const PrintResponseSearch = ({result, navigation }) => {
                     showsHorizontalScrollIndicator={false}
                     renderItem ={({item})=>(
                         <PrintItemHourly item={item}/>
-                        )}
+                    )}
                 />
             </Layout>
         </TouchableOpacity >): null

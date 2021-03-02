@@ -8,7 +8,9 @@ import {getIconApi } from '../api/OpenWeather.js';
 const PrintItemDaily = ({ item }) =>{
 
     const day = (dt) => {
-        return moment(dt * 1000).format('dddd');
+        let day = moment(dt * 1000).format('dddd');
+        day = day.charAt(0).toUpperCase() + day.slice(1);
+        return day;
     }
     const date = (dt) => {
         return moment(dt * 1000).format('D MMM');
@@ -49,7 +51,8 @@ const styles = StyleSheet.create({
     sectionIcon:{
         flex:1,
         justifyContent:"center",
-        alignItems:"center"
+        alignItems:"center",
+        marginLeft:60,
     },
     tmp:{
         flex:1, 

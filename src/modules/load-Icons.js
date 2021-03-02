@@ -28,3 +28,11 @@ export const NotIcon = (props) => (
 export const HelpIcon = (props) => (
     <Icon {...props} name='question-mark-circle-outline' />
 );
+
+export const FavIconOutline = (props) => (
+    <Icon {...props} name='bookmark-outline' />
+);
+
+export const FavIcon = (props) => (
+    <Icon {...props} name='bookmark' />
+);

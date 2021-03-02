@@ -48,10 +48,10 @@ const HomeScreem = ({ navigation }) => {
             console.log("no init geocode !");
           }
           
-          setLocation({latitude:latitude, longitude:longitude});
-
+          
           try {
             getWeatherToLocation(latitude, longitude);
+            setLocation({latitude, longitude});
           } catch (error) {
             console.log("error loading api !"+ error);
           }
@@ -63,9 +63,10 @@ const HomeScreem = ({ navigation }) => {
   }
   
   const onRefresh = useCallback(() => {
-    //console.log(location);
+    console.log(location);
     try {
-      getWeatherToLocation(location.latitude, location.longitude);
+      const {latitude, longitude} = location;
+      getWeatherToLocation(latitude, longitude);
       setRefreshing(true);
       wait(2000).then(() => setRefreshing(false));
     } catch (error) {
@@ -122,10 +123,6 @@ const HomeScreem = ({ navigation }) => {
                <TopNavigation title={geocode[0].city} alignment='center' accessoryLeft={goSearchScreen} accessoryRight={toogleTheme}/>
               <Layout style={{flex:1}}>
                 <WeatherDetails weatherToLocation={weatherToLocation} callback_func_Refreshing={onRefresh} refreshing={refreshing}/>
-                <Divider/>
-                <Layout style={{flex:1, justifyContent:"center", alignItems:"center"}}>
-                  <Button style={styles.button} appearance='ghost' status='info' accessoryRight={MoreIcon} onPress={navigateDetails}>Details</Button>
-                </Layout>
                 <Divider/>
               </Layout>
             </Layout>

@@ -10,6 +10,10 @@ import { default as mytheme } from './custom-theme.json';
 import { AppNavigator } from './src/navigation/Navigation.component.js';
 import { ThemeContext } from './src/modules/theme-context.js';
 
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react'
+import {store, persistor } from './src/store/configStore.js';
+
 export default () => {
   const styleTypes = ['default','dark-content', 'light-content'];
   const [theme, setTheme] = React.useState('light');
@@ -31,7 +35,8 @@ export default () => {
   
 
   return (
-    <>
+    <Provider store={store}>
+      <PersistGate persistor={persistor}/>
       <IconRegistry icons={EvaIconsPack}/>
       <ThemeContext.Provider value={{ theme, toggleTheme }}>
         <ApplicationProvider {...eva} theme={{...eva[theme],...mytheme}}> 
@@ -39,7 +44,7 @@ export default () => {
         </ApplicationProvider>
         <StatusBar barStyle={styleStatusBar} backgroundColor={mytheme['color-primary-500']}/>
       </ThemeContext.Provider>
-    </>
+    </Provider>
   );
 }
 
