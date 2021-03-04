@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, RefreshControl, ScrollView, View } from 'react-native';
+import { Image, StyleSheet, RefreshControl, ScrollView } from 'react-native';
 import { Divider, Layout, Text, List, Button } from '@ui-kitten/components';
 
 import { getIconApi } from "../api/OpenWeather.js"
@@ -10,7 +10,8 @@ import {FavIcon, FavIconOutline } from '../modules/load-Icons.js';
 
 import moment from 'moment';
 import 'moment/locale/fr';
-//import { ScrollView } from 'react-native-gesture-handler';
+import CircleChart from './circleChart.js'
+
 
 moment.locale('fr');
 
@@ -27,17 +28,19 @@ const WeatherDetails = ({weatherToLocation, callback_func_Refreshing, refreshing
     const percentage = 66;
 
     return(
-        <Layout style={styles.container}>
+        <ScrollView 
+            style={{flex:1}}
+            refreshControl={
+                <RefreshControl
+                refreshing={refreshing}
+                onRefresh={callback_func_Refreshing}
+                />
+            }
+        >
             <Divider/>
-            <Layout style={{flex:1}}>
-                <ScrollView 
-                    contentContainerStyle={{flex:1, flexDirection:"column", justifyContent:"center"}}
-                    refreshControl={
-                        <RefreshControl
-                          refreshing={refreshing}
-                          onRefresh={callback_func_Refreshing}
-                        />
-                    }
+            <Layout style={{flex:1, paddingTop:20}}>
+                <Layout 
+                    style={{flex:1, flexDirection:"column", justifyContent:"center"}}
                 >
                     <Layout style={styles.cardDayTemp} status='basic'>
                         <Layout style={styles.cardDayTemp}>
@@ -66,8 +69,8 @@ const WeatherDetails = ({weatherToLocation, callback_func_Refreshing, refreshing
                         </Layout>
                         </Layout>
                     </Layout>
-                </ScrollView>     
-                <Divider/>
+                </Layout>     
+                <Divider style={{marginTop:10}}/>
                 <Layout style={styles.cardForecastByHoursDay}>
                     <List
                     data={weatherToLocation.hourly}
@@ -90,22 +93,31 @@ const WeatherDetails = ({weatherToLocation, callback_func_Refreshing, refreshing
                     />   
                 </Layout>
                 <Divider/>
-                <Layout style={{ paddingHorizontal: 10 }}>
-                  <Layout style={{marginTop:10}}>
-                    <Text category="h6">NIVEAU DE CONFORT</Text>
+                <Layout style={{flex:1, paddingHorizontal: 10 }}>
+                  <Layout style={{ flex: 1, paddingVertical: 10, marginTop:10, marginBottom:20}}>
+                        <Text category="h6" style={{flex:1, paddingVertical:10}}>NIVEAU DE CONFORT</Text>
+                        <Text style={{marginLeft:10, paddingBottom:5}}>Humidité</Text>
+                        <Layout style={{ flex: 1, flexDirection:"row" ,justifyContent:"center"}}>
+                            <Layout style={{marginRight:10}}>
+                                <CircleChart />
+                            </Layout>
+                            <Layout style={{flex:2, justifyContent:'center', alignItems:'center'}}>
+                                <Text>description</Text>
+                            </Layout>
+                        </Layout>
                   </Layout>
-                  <Layout>
-                    <Text category="h6">VENT</Text>
+                  <Layout style={{flex: 1}}>
+                    <Text category="h6" style={{paddingVertical:10}}>VENT</Text>
                     <Image source={require('../../assets/eolienne.gif')}
                         style={{width:100, height:100}}
                     />
                   </Layout>
-                  <Layout>
+                  <Layout style={{flex:1, paddingVertical:20}}>
                     <Text category="h6">LEVERR ET COUCHER DE SOLEIL</Text>
                   </Layout>
                 </Layout>
             </Layout>
-        </Layout>
+        </ScrollView>
     );
 }
 
@@ -125,6 +137,7 @@ const styles = StyleSheet.create({
       //borderWidth: 1
     },
     cardForecastByHoursDay: {
+        marginTop:5
         //borderWidth: 1,
         //borderColor: "blue"
     },

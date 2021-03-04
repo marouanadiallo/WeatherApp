@@ -4,7 +4,7 @@ import { useTheme, CheckBox, List, Divider, Layout, TopNavigation, Text, TopNavi
 import { ThemeContext, toogleThemeIconFill, toogleThemeIconOutiline } from '../modules/theme-context';
 import { connect } from 'react-redux';
 
-import { BackIcon, CloseIcon,  HelpIcon } from '../modules/load-Icons.js';
+import { BackIcon,  HelpIcon } from '../modules/load-Icons.js';
 
 import { searchLocation, getLocationWithGeocode  } from '../api/apiOpencage.js'
 

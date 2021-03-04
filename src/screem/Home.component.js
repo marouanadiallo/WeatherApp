@@ -5,11 +5,10 @@ import * as Permissions from 'expo-permissions';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import { TopNavigationAction, TopNavigation, Spinner, Layout, Button, Divider, Text, Card, Modal } from '@ui-kitten/components';
 import { ThemeContext, toogleThemeIconFill, toogleThemeIconOutiline } from '../modules/theme-context';
-import { SearchIcon, MoreIcon } from '../modules/load-Icons.js';
 
 
+import { SearchIcon } from '../modules/load-Icons.js';
 import WeatherDetails from '../modules/weatherDetails.js'
-
 import { getWeather } from '../api/OpenWeather.js';
 
 const HomeScreem = ({ navigation }) => {
