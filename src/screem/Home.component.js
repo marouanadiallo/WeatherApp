@@ -38,6 +38,7 @@ const HomeScreem = ({ navigation }) => {
             console.log("error to get location !");
           });
           const { latitude , longitude } = location.coords;
+          setLocation({latitude, longitude});
           try {
 
             setGeocode(await Location.reverseGeocodeAsync({ latitude , longitude }).catch((error)=>{
@@ -50,7 +51,6 @@ const HomeScreem = ({ navigation }) => {
           
           try {
             getWeatherToLocation(latitude, longitude);
-            setLocation({latitude, longitude});
           } catch (error) {
             console.log("error loading api !"+ error);
           }
@@ -62,7 +62,7 @@ const HomeScreem = ({ navigation }) => {
   }
   
   const onRefresh = useCallback(() => {
-    console.log(location);
+    //console.log(location);
     try {
       const {latitude, longitude} = location;
       getWeatherToLocation(latitude, longitude);
@@ -72,7 +72,7 @@ const HomeScreem = ({ navigation }) => {
       console.log("error loading api ! "+error);
     }
     
-  }, []);
+  }, [location]);
 
   const toogleTheme = () => (
     themeContext.toggleTheme === 'light' ? 

@@ -11,6 +11,7 @@ import WeatherDetails from '../modules/weatherDetails.js'
 
 const DetailsScreen = ({ navigation, route, dispatch, favorites }) => {
 
+  //console.log(route.params.geocode);
   const themeContext = useContext(ThemeContext);
   const { latitude, longitude, formatted, components } = route.params.geocode;
   const [results, setResults] = useState([]);
@@ -19,9 +20,10 @@ const DetailsScreen = ({ navigation, route, dispatch, favorites }) => {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(()=>{
+    setIsLoading(false);
     getWeatherToLocation(latitude, longitude);
-    //console.log(place);
-  }, []);
+    //console.log("reload");
+  }, [route.params.geocode]);
 
   const toogleTheme = () => (
     themeContext.toggleTheme === 'light' ? 
@@ -57,7 +59,7 @@ const DetailsScreen = ({ navigation, route, dispatch, favorites }) => {
       console.log("error loading api ! "+error);
     }
     
-  }, []);
+  }, [route.params.geocode]);
 
   const toggleFavorite= () => {
     const action = { type: "TOGGLE_FAVORITE", value: { geocode:{ latitude:latitude, longitude:longitude, formatted:formatted, components:components} } }

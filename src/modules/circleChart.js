@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, TextInput, Animated, StyleSheet} from 'react-native';
+import {View, TextInput, Animated, StyleSheet, useWindowDimensions} from 'react-native';
 import Svg, {G, Circle} from 'react-native-svg';
 import {useTheme} from '@ui-kitten/components';
 
@@ -8,13 +8,16 @@ const AnimatedText = Animated.createAnimatedComponent(TextInput);
 
 
 const CircleChart = ({
-    percentage = 75,
+    percentage = 100,
     radius = 50,
     strokeWidth = 10,
     duration = 500,
     delay = 0,
-    max = 100
+    max = 100,
+    color='color-primary-500',
+    fill='transparent'
 })=>{
+    const win = useWindowDimensions();
     const animatedValue = React.useRef(new Animated.Value(0)).current;
     
     const circleRef = React.useRef();
@@ -60,7 +63,7 @@ const CircleChart = ({
         }
     }, [max, percentage])
     return(
-        <View >
+        <View>
             <Svg 
                 width={radius * 2} 
                 height={radius * 2} 
@@ -70,17 +73,17 @@ const CircleChart = ({
                     <Circle
                         cx='50%'
                         cy='50%'
-                        stroke={theme['color-primary-500']}
+                        stroke={theme[color]}
                         strokeWidth={strokeWidth}
                         r={radius}
-                        fill="transparent"
+                        fill={fill}
                        strokeOpacity={0.2}
                     />
                     <AnimatedCircle
                         ref={circleRef}
                         cx='50%'
                         cy='50%'
-                        stroke={theme['color-primary-500']}
+                        stroke={theme[color]}
                         strokeWidth={strokeWidth}
                         r={radius}
                         fill="transparent"

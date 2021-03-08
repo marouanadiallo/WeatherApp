@@ -36,3 +36,7 @@ export const FavIconOutline = (props) => (
 export const FavIcon = (props) => (
     <Icon {...props} name='bookmark' />
 );
+
+export const AlertIcon = (props) => (
+    <Icon {...props} name='alert-circle-outline' />
+);

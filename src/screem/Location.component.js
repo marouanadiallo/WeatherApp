@@ -20,8 +20,8 @@ const LocationScreem = ({navigation, favorites}) => {
     //console.log(favorites);
     useEffect(()=>{
         loadFav();
-        setIsLoading(true);       
     },[favorites]);
+
 
     const loadFav = () => {
         if(favorites.length > 0){
@@ -39,6 +39,8 @@ const LocationScreem = ({navigation, favorites}) => {
                 }
             });
             setResultats(tab);
+            setIsLoading(true);       
+
         }
     }
 

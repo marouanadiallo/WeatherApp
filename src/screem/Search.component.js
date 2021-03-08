@@ -1,10 +1,13 @@
 import React, {useState, useEffect} from 'react';
-import { SafeAreaView, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
-import { useTheme, CheckBox, List, Divider, Layout, TopNavigation, Text, TopNavigationAction,Select,SelectItem,IndexPath, Input, Icon, Button, Spinner, Modal, Card, ViewPager} from '@ui-kitten/components';
+import { SafeAreaView, StyleSheet, Dimensions, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { useTheme, CheckBox, List, Divider, Layout, TopNavigation, Text,
+     TopNavigationAction,Select,SelectItem,
+     IndexPath, Input, Icon, Button, Spinner, Modal,
+     Card, ViewPager} from '@ui-kitten/components';
 import { ThemeContext, toogleThemeIconFill, toogleThemeIconOutiline } from '../modules/theme-context';
 import { connect } from 'react-redux';
 
-import { BackIcon,  HelpIcon } from '../modules/load-Icons.js';
+import { BackIcon,  CloseIcon,  HelpIcon } from '../modules/load-Icons.js';
 
 import { searchLocation, getLocationWithGeocode  } from '../api/apiOpencage.js'
 
@@ -58,6 +61,7 @@ const SearchScreen =  ({navigation, dispatch, aboutModal, favorites}) => {
     
     
     const theme = useTheme();
+    const windows = useWindowDimensions();
 
     const toogleTheme = () => (
         themeContext.toggleTheme === 'light' ? 
@@ -224,8 +228,10 @@ const SearchScreen =  ({navigation, dispatch, aboutModal, favorites}) => {
                         backdropStyle={styles.backdrop}
                         onBackdropPress={() => setVisibleModalHelp(false)}
                     >
-                        <Card disabled={true} style={{ maxHeight: Dimensions.get('screen').height/2}}>
-                            <Text category="h4">Aide à la recherche</Text>
+                        <Layout disabled={true} style={{ width:windows.width, paddingHorizontal:10}}>
+                            <Text category="h2" 
+                                style={{marginBottom:5, borderBottomColor: '#ddd', borderBottomWidth: 1, opacity:0.5}}
+                            >Aide à la recherche</Text>
                             <Divider/>
                             <ViewPager
                                 selectedIndex={viewPageSelectedIndex}
@@ -245,7 +251,7 @@ const SearchScreen =  ({navigation, dispatch, aboutModal, favorites}) => {
                                     <Text category='h6'>TRANSACTIONS</Text>
                                 </Layout>
                             </ViewPager>
-                            <Layout style={{ flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
+                            <Layout style={{ flexDirection:"row", justifyContent:"space-between", marginBottom:3, alignItems:"center"}}>
                                 <CheckBox
                                     style={styles.checkbox}
                                     status='info'
@@ -257,11 +263,11 @@ const SearchScreen =  ({navigation, dispatch, aboutModal, favorites}) => {
                                 <Button onPress={() =>{
                                         setVisibleModalHelp(false);
                                         toggleOpenHelpModal();
-                                    }} appearance='ghost' status='danger'>
+                                    }} appearance='ghost' status='danger' accessoryLeft={CloseIcon}>
                                     Fermer
                                 </Button>
                             </Layout>
-                        </Card>
+                        </Layout>
                     </Modal>    
         </SafeAreaView>
     );
