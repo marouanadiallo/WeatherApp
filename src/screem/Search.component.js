@@ -242,13 +242,13 @@ const SearchScreen =  ({navigation, dispatch, aboutModal, favorites}) => {
                                     style={styles.tabViewpage}
                                     level='2'
                                 >
-                                    <Text category='h6'>USERS</Text>
+                                    <Text category='h5' style={{color:theme['color-info-500']}}>Selectionner un pays et ensuite saisissez une adresse.</Text>                                    
                                 </Layout>
                                 <Layout
                                     style={styles.tabViewpage}
                                     level='2'
                                 >
-                                    <Text category='h6'>TRANSACTIONS</Text>
+                                    <Text category='h6' style={{color:theme['color-info-500']}}>une adresse: minimum 3 caractères</Text>
                                 </Layout>
                             </ViewPager>
                             <Layout style={{ flexDirection:"row", justifyContent:"space-between", marginBottom:3, alignItems:"center"}}>
